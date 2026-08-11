@@ -1,0 +1,192 @@
+/* @import "tailwindcss"; */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f5f7fb;
+
+  --card: #ffffff;
+
+  --text: #111827;
+
+  --secondary: #6b7280;
+
+  --primary: #2563eb;
+
+  --border: #d1d5db;
+}
+
+.dark {
+  --bg: #1a1330;
+
+  --card: #231942;
+
+  --text: #ffffff;
+
+  --secondary: #b5b5c5;
+
+  --primary: #8b5cf6;
+
+  --border: #3d2f68;
+}
+
+body {
+  background: var(--bg);
+
+  color: var(--text);
+
+  transition: 0.3s;
+}
+
+/* body {
+  font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+  transition: 0.3s;
+  background: #f8fafc;
+  color: #111827;
+}
+
+.dark body {
+  background: linear-gradient(
+    135deg,
+    #1e1636 0%,
+    #2b1d52 30%,
+    #3d2670 60%,
+    #2a1f4d 100%
+  );
+
+  color: #ffffff;
+} */
+
+/* ==========================================
+   Base Styles
+========================================== */
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+} */
+
+/* body {
+  font-family: "Poppins", sans-serif;
+  background: #f8fafc;
+  color: #111827;
+  overflow-x: hidden;
+  transition: all 0.3s ease;
+} */
+
+/* ==========================================
+   Scrollbar
+========================================== */
+
+.custom-scroll::-webkit-scrollbar {
+  display: none;
+}
+/*
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2563eb;
+  border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+} */
+
+/* ==========================================
+   Selection
+========================================== */
+
+/* ::selection {
+  background: #2563eb;
+  color: white;
+} */
+
+/* ==========================================
+   Images
+========================================== */
+
+/* img {
+  max-width: 100%;
+  display: block;
+} */
+
+/* ==========================================
+   Links
+========================================== */
+
+/* a {
+  text-decoration: none;
+  color: inherit;
+} */
+
+/* ==========================================
+   Buttons
+========================================== */
+
+/* button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+} */
+
+/* ==========================================
+   Utility Classes
+========================================== */
+
+/* .container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.section-padding {
+  @apply py-16 md:py-24;
+}
+
+.glass {
+  @apply bg-white/30 backdrop-blur-md border border-white/20 shadow-glass;
+}
+
+.primary-btn {
+  @apply bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 hover:bg-blue-700 transition-all duration-300;
+}
+
+.secondary-btn {
+  @apply bg-secondary text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-300;
+}
+
+.card {
+  @apply bg-white rounded-2xl shadow-card hover:shadow-hover transition-all duration-300;
+} */
+
+/* ==========================================
+   Dark Mode
+========================================== */
+
+/* .dark body {
+  background: #111827;
+  color: white;
+}
+
+.dark .card {
+  @apply bg-gray-800;
+}
+
+
+
+.dark .glass {
+  @apply bg-gray-800/40 border-gray-700;
+}
+
+ */
