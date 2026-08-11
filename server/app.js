@@ -41,15 +41,15 @@ const app = express();
 
 app.use(
     cors({
-        origin:"http://localhost:5173",
+        origin: process.env.CLIENT_URL,
         credentials: true,
     })
 );
 
 app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
-  next();
+    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+    res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+    next();
 });
 
 
@@ -59,7 +59,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
-app.use( "/uploads",express.static( path.join(process.cwd(),"uploads") ));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 
 // Home Route
@@ -75,13 +75,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/wishlist",wishlistRoutes)
+app.use("/api/wishlist", wishlistRoutes)
 
 app.use("/api/upload", uploadRoutes);
-app.use("/api/admin",adminRoutes);
+app.use("/api/admin", adminRoutes);
 
-app.use("/api/categories",categoryRoutes);
-app.use("/api/contact",contactRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/contact", contactRoutes);
 
 // 404 Route
 app.use((req, res) => {
