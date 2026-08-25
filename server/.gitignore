@@ -8,7 +8,6 @@ config/serviceAccountKey.json
 
 controllers/reviewController.js
 routes/reviewRoutes.js
-createAdmin.js
 
 
 
