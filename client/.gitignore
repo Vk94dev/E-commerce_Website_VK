@@ -28,6 +28,5 @@ dist-ssr
 
 .env
 src/components/test.jsx
-src/redux/slices/paymentSlice.js
 
 
