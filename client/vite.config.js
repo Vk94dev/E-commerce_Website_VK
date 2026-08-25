@@ -30,7 +30,7 @@ export default defineConfig({
 
             "/api": {
 
-                target: "http://localhost:3000",
+                target: "https://e-commerce-website-vk.onrender.com",
 
                 changeOrigin: true,
 
