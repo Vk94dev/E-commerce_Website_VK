@@ -51,7 +51,7 @@ const DealTimer = () => {
 
             <Clock3 className="text-red-600 " />
 
-            <span className="font-semibold">
+            <span className="font-semibold text-[var(--text)]">
                 Ends in {formatTime(timeLeft)}
             </span>
 

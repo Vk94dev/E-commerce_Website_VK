@@ -6,14 +6,9 @@ config/serviceAccountKey.json
 
 
 
-config/razorpay.js
 controllers/reviewController.js
-controllers/paymentController.js
-middleware/verifyPayment.js
-routes/paymentRoutes.js
 routes/reviewRoutes.js
-utils/paymentHelper.js
-
+createAdmin.js
 
 
 

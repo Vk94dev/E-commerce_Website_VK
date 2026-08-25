@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { Flame, Clock3, ShoppingCart, Star } from "lucide-react";
 import DealTimer from "../../components/DealTimer";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
 
 
 const  Deals = ()=> {
+
+    const navigate = useNavigate();
 
     const deals = [
     {
@@ -111,19 +116,19 @@ const  Deals = ()=> {
 
             {/* Offer Banner */}
 
-            <div className="max-w-7xl mx-auto mt-8">
+            <div className="max-w-7xl mx-auto mt-8 text-[var(--text)]">
 
-                <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row justify-between items-center">
+                <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] shadow-lg p-6 flex flex-col md:flex-row justify-between items-center">
 
                     <div>
 
-                        <h2 className="text-3xl font-bold">
+                        <h2 className="text-3xl font-bold ">
 
                             Mega Sale
 
                         </h2>
 
-                        <p className="text-gray-500 mt-2">
+                        <p className="text-[var(--secondary)] mt-2">
 
                             Up to 70% OFF on Electronics
 
@@ -157,12 +162,14 @@ const  Deals = ()=> {
 
                     {products.map((product)=>(
 
-                        <div
+                        <motion.div
                             key={product.id}
-                            className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300"
+                             whileHover={{ scale: 1.03 }}
+                            className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300"
+                           
                         >
 
-                            <div className="relative">
+                            <div className="relative cursor-pointer"  onClick={()=>navigate(`/product/${product.id}`)}>
 
                                 <img
                                     src={product.image}
@@ -206,7 +213,7 @@ const  Deals = ()=> {
 
                                     </span>
 
-                                    <span className="ml-3 text-gray-400 line-through">
+                                    <span className="ml-3 text-[var(--secondary)] line-through">
 
                                         ₹{product.oldPrice}
 
@@ -224,7 +231,7 @@ const  Deals = ()=> {
 
                             </div>
 
-                        </div>
+                        </motion.div>
 
                     ))}
 

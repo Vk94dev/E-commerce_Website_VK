@@ -99,6 +99,7 @@ export const addToCart = async (productId, quantity = 1) => {
     productId,
     quantity,
   });
+  console.log("res add to cart =  ", response)
 
   return response.data;
 };

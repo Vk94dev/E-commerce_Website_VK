@@ -105,7 +105,7 @@ const orderSchema = new mongoose.Schema(
 
         paymentMethod: {
             type: String,
-            enum: ["cod","online" ,"Razorpay", "Stripe"],
+            enum: ["cod", "online", "Razorpay", "Stripe"],
             required: true
         },
 
@@ -115,14 +115,14 @@ const orderSchema = new mongoose.Schema(
             default: "Pending"
         },
         paymentResult: {
-    id: String,
-    orderId: String,
-    signature: String,
-    status: String,
-    method: String,
-    email: String,
-    refundId: String
-},
+            id: String,
+            orderId: String,
+            signature: String,
+            status: String,
+            method: String,
+            email: String,
+            refundId: String
+        },
 
         orderStatus: {
             type: String,
@@ -131,7 +131,7 @@ const orderSchema = new mongoose.Schema(
                 "Confirmed",
                 "Packed",
                 "Shipped",
-                "Out For Delivery",
+                "Out for Delivery",
                 "Delivered",
                 "Cancelled"
             ],
@@ -157,9 +157,9 @@ const orderSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
-    razorpayOrderId: {
-        type: String
-    },
+        razorpayOrderId: {
+            type: String
+        },
 
         isDelivered: {
             type: Boolean,

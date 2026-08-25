@@ -1,4 +1,6 @@
 import axios from "axios";
+import toast from "react-hot-toast";
+
 
 const api = axios.create({
    baseURL: import.meta.env.VITE_API_URL,
@@ -58,18 +60,30 @@ const api = axios.create({
    → Global error handling
 ------------------------------ */
 
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response) {
-//       console.error("API Error:", error.response.data);
-//     } else {
-//       console.error("Network Error:", error.message);
-//     }
+let is401Status = false;
 
-//     return Promise.reject(error);
-//   }
-// );
+api.interceptors.response.use(
+   (response) => response,
+   // (error) => {
+   //    if (error.response) {
+   //       console.error("API Error:", error.response.data);
+   //    } else {
+   //       console.error("Network Error:", error.message);
+   //    }
+
+   (error) => {
+      if (error.response?.status === 401 && !is401Status) {
+         is401Status = true;
+         toast.error(error.response.data.message || "Unauthorized");
+         setTimeout(() => {
+            is401Status = false;
+         }, 3000)
+      }
+
+      return Promise.reject(error);
+   }
+);
+
 
 export default api;
 

@@ -31,6 +31,8 @@ import contactRoutes from "./routes/contactRoutes.js";
 dotenv.config();
 
 
+import paymentRoutes from "./routes/paymentRoutes.js"
+
 // Connect MongoDB
 connectDB();
 
@@ -82,6 +84,10 @@ app.use("/api/admin", adminRoutes);
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/contact", contactRoutes);
+
+app.use("/api/payment", paymentRoutes)
+
+
 
 // 404 Route
 app.use((req, res) => {

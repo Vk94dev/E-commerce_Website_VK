@@ -1,13 +1,6 @@
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-    CheckCircle,
-    Package,
-    Truck,
-    Home,
-    Clock,
-
-} from "lucide-react";
+import {CheckCircle,Package,Truck,Home,Clock,} from "lucide-react";
 import { useEffect, useState } from "react";
 import { getOrderById } from "../api/api";
 import { useNavigate } from "react-router-dom";
@@ -51,15 +44,13 @@ const Track = ()=>{
 
 
 
-let currentStep =0;
+const [currentStep,setCurrentStep] = useState(0);
 
-    useEffect(()=>{
+useEffect(()=>{
         const fetchOrderById = async ()=>{
             try{
                 const res = await getOrderById(id);
-                 setOrder(res.order);
-                
-                
+                 setOrder(res.order);        
             }
             catch(err){
                 console.log(err.message);
@@ -68,9 +59,12 @@ let currentStep =0;
         fetchOrderById();
     },[id])
 
-    useEffect(()=>{
-        currentStep = steps.indexOf(order?.orderStatus);
-    },[id])
+useEffect(()=>{
+       if(order?.orderStatus){
+        const index = steps.findIndex((step)=>step.name === order.orderStatus)
+         setCurrentStep(index);
+       }
+    },[order])
       
          
 

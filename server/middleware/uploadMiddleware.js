@@ -7,10 +7,10 @@ import path from "path";
 
 // for disk storage 
 const storage = multer.diskStorage({
-    destination: function(req,file,cb){
-        cb(null,"uploads/profile");
+    destination: function (req, file, cb) {
+        cb(null, "uploads/profile");
     },
-    filename:function(req,file,cb){
+    filename: function (req, file, cb) {
         cb(
             null,
             Date.now() + path.extname(file.originalname)
@@ -29,7 +29,8 @@ const fileFilter = (req, file, cb) => {
         "image/jpg",
         "image/png",
         "image/webp",
-        "image/gif"
+        "image/gif",
+        "image/avif"
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
@@ -39,7 +40,7 @@ const fileFilter = (req, file, cb) => {
             new Error(
                 "Only JPG, JPEG, PNG, WEBP and GIF images are allowed."
             ),
-           false
+            false
         );
     }
 };
