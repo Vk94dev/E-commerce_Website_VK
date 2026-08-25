@@ -3,38 +3,38 @@ import Category from "../models/category.js";
 
 // Create Category
 
-export const createCategory = async(req,res)=>{
+export const createCategory = async (req, res) => {
 
-try{
-
-
-const category = await Category.create({
-
-name:req.body.name,
-
-description:req.body.description
-
-});
+    try {
 
 
-res.status(201).json({
+        const category = await Category.create({
 
-success:true,
+            name: req.body.name,
 
-category
+            description: req.body.description
 
-});
+        });
 
 
-}
-catch(error){
+        res.status(201).json({
 
-res.status(500).json({
+            success: true,
 
-message:error.message
+            category
 
-});
-}
+        });
+
+
+    }
+    catch (error) {
+
+        res.status(500).json({
+
+            message: error.message
+
+        });
+    }
 };
 
 
@@ -42,56 +42,56 @@ message:error.message
 
 // Get All Categories
 
-export const getCategories = async(req,res)=>{
+export const getCategories = async (req, res) => {
 
-try{
-const categories = await Category.find();
+    try {
+        const categories = await Category.find();
 
-res.json(categories);
-}
-catch(error){
+        res.json(categories);
+    }
+    catch (error) {
 
-res.status(500).json({
+        res.status(500).json({
 
-message:error.message
+            message: error.message
 
-});
-}
+        });
+    }
 };
 
 
 
 // Update Category
 
-export const updateCategory = async(req,res)=>{
+export const updateCategory = async (req, res) => {
 
 
-try{
+    try {
 
 
-const category = await Category.findByIdAndUpdate(
+        const category = await Category.findByIdAndUpdate(
 
-req.params.id,
+            req.params.id,
 
-req.body,
+            req.body,
 
-{
-new:true
-}
+            {
+                new: true
+            }
 
-);
+        );
 
-res.json(category);
-}
+        res.json(category);
+    }
 
-catch(error){
+    catch (error) {
 
-res.status(500).json({
+        res.status(500).json({
 
-message:error.message
+            message: error.message
 
-});
-}
+        });
+    }
 };
 
 
@@ -99,30 +99,30 @@ message:error.message
 
 // Delete Category
 
-export const deleteCategory = async(req,res)=>{
+export const deleteCategory = async (req, res) => {
 
 
-try{
+    try {
 
 
-await Category.findByIdAndDelete(
-req.params.id
-);
+        await Category.findByIdAndDelete(
+            req.params.id
+        );
 
-res.json({
+        res.json({
 
-message:"Category deleted"
-});
-}
-catch(error){
+            message: "Category deleted"
+        });
+    }
+    catch (error) {
 
-res.status(500).json({
+        res.status(500).json({
 
-message:error.message
+            message: error.message
 
-});
+        });
 
-}
+    }
 
 
 };

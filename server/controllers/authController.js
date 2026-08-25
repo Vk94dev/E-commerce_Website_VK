@@ -40,13 +40,15 @@ export const registerUser = async (req, res) => {
             address
         });
 
-        const  token = generateToken(user._id);
-        res.cookie("token",token,{
-          httpOnly: true,
-    //    secure: process.env.NODE_ENV === "production",
-    secure:false,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000
+        const token = generateToken(user._id);
+        res.cookie("token", token, {
+            httpOnly: true,
+            //    secure: process.env.NODE_ENV === "production",
+            // secure:false,
+            // sameSite: "lax",
+            secure: true,
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
         res.status(201).json({
@@ -61,7 +63,7 @@ export const registerUser = async (req, res) => {
                 role: user.role
             }
         });
-        
+
     } catch (error) {
 
         res.status(500).json({
@@ -76,63 +78,65 @@ export const registerUser = async (req, res) => {
 
 
 export const googleAuth = async (req, res) => {
-  try {
-    const { token } = req.body;
+    try {
+        const { token } = req.body;
 
-    // const decoded = await admin.auth().verifyIdToken(token);
+        // const decoded = await admin.auth().verifyIdToken(token);
 
-    const decoded = await getAuth().verifyIdToken(token);
-     console.log("decoded = ",decoded);
+        const decoded = await getAuth().verifyIdToken(token);
+        console.log("decoded = ", decoded);
 
-    const { uid, email, name, picture } = decoded;
-    console.log("uid = ",uid);
-    console.log("email = ",email);
-    console.log("name = ",name);
+        const { uid, email, name, picture } = decoded;
+        console.log("uid = ", uid);
+        console.log("email = ", email);
+        console.log("name = ", name);
 
-    let user = await User.findOne({ email });
+        let user = await User.findOne({ email });
 
-  if (!user) {
-       user = await User.create({
-        googleId: uid,
-        name,
-        email,
-        profileImage: picture,
-    });
-} else {
-    if (!user.googleId) {
-        user.googleId = uid;
-    }
-    if (!user.profileImage) {
-        user.profileImage = picture;
-    }
-    await user.save();
-}
-    console.log("createdUser = ",user);
+        if (!user) {
+            user = await User.create({
+                googleId: uid,
+                name,
+                email,
+                profileImage: picture,
+            });
+        } else {
+            if (!user.googleId) {
+                user.googleId = uid;
+            }
+            if (!user.profileImage) {
+                user.profileImage = picture;
+            }
+            await user.save();
+        }
+        console.log("createdUser = ", user);
 
-     const  jwtToken = generateToken(user._id);
-       console.log("token = ",jwtToken);
+        const jwtToken = generateToken(user._id);
+        console.log("token = ", jwtToken);
 
-     res.cookie("token",jwtToken,{
-          httpOnly: true,
-    //    secure: process.env.NODE_ENV === "production",
-    secure:false,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000
+        res.cookie("token", jwtToken, {
+            httpOnly: true,
+            //    secure: process.env.NODE_ENV === "production",
+            // secure:false,
+            // sameSite: "lax",
+            secure: true,
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         })
-    
-    res.status(200).json({
-      message: "Google login successful",
-      user,
-    });
 
-  } catch (error) {
-    console.log(error);
+        res.status(200).json({
+            message: "Google login successful",
+            user,
+        });
 
-    res.status(500).json({
-        success: false,
-        message: error.message,
-    });
-}
+    } catch (error) {
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 };
 
 
@@ -154,8 +158,8 @@ export const loginUser = async (req, res) => {
             });
         }
 
-    //   console.log("email = ",email);
-    //   console.log("password = ",password);
+        //   console.log("email = ",email);
+        //   console.log("password = ",password);
 
         // Find User
         const user = await User.findOne({ email });
@@ -178,14 +182,16 @@ export const loginUser = async (req, res) => {
                 message: "Invalid email or password."
             });
         }
-        
-        const  token = generateToken(user._id,user.role);
-        res.cookie("token",token,{
-          httpOnly: true,
-    //    secure: process.env.NODE_ENV === "production",
-    secure:false,   
-    sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000
+
+        const token = generateToken(user._id, user.role);
+        res.cookie("token", token, {
+            httpOnly: true,
+            //    secure: process.env.NODE_ENV === "production",
+            // secure:false,   
+            // sameSite: "lax",
+            secure: true,
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
         res.status(200).json({
@@ -214,44 +220,46 @@ export const loginUser = async (req, res) => {
 
 
 
-export const logoutUser = async (req,res)=>{
-  try{
-    console.log("backend logout")
-    res.clearCookie("token", {
-        httpOnly: true,
-        secure: false,      // true in production with HTTPS
-        sameSite: "lax",
-        path:"/"
-    });
-   res.status(200).json({
-    success:true,
-    message:"Logged out",
-   })
-}
-catch(err){
-     res.status(500).json({
+export const logoutUser = async (req, res) => {
+    try {
+        console.log("backend logout")
+        res.clearCookie("token", {
+            httpOnly: true,
+            // secure: false,      // true in production with HTTPS
+            // sameSite: "lax",
+            secure: true,
+            sameSite: "none",
+            path: "/"
+        });
+        res.status(200).json({
+            success: true,
+            message: "Logged out",
+        })
+    }
+    catch (err) {
+        res.status(500).json({
             success: false,
             message: error.message
         });
 
-}
+    }
 }
 
 
 // GET /api/auth/me
 
 export const getMe = async (req, res) => {
- try{
-    res.status(200).json({
-        success: true,
-        user: req.user
-    });
+    try {
+        res.status(200).json({
+            success: true,
+            user: req.user
+        });
 
- }
- catch(err){
-    console.log(err.message);
- }
-    
+    }
+    catch (err) {
+        console.log(err.message);
+    }
+
 };
 
 
@@ -301,17 +309,17 @@ export const updateProfile = async (req, res) => {
         user.address = req.body.address || user.address;
 
         // console.log(req.file);
-       if(req.file){
-        user.profileImage = `${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`;
-       }
+        if (req.file) {
+            user.profileImage = `${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`;
+        }
 
         // Update password if provided
         if (req.body.password) {
             user.password = req.body.password;
         }
-        
+
         await user.save();
- console.log(user);
+        console.log(user);
         // const updatedUser = await user.save();
 
         res.status(200).json({
