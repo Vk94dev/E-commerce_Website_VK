@@ -513,7 +513,6 @@ const Checkout = () => {
 
             // 6. Open Razorpay
             razorpay.open();
-         return;
 
         } catch (error) {
 
