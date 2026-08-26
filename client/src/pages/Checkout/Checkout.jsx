@@ -513,7 +513,7 @@ const Checkout = () => {
 
             // 6. Open Razorpay
             razorpay.open();
-
+         return;
 
         } catch (error) {
 
@@ -563,11 +563,12 @@ try{
 
 
         if (paymentMethod === "online") {
-           await handleRazorpayPayment();
-           
+          const res =  await handleRazorpayPayment();
+           if(res){
            dispatch(clearCarts());
             await clearCart();
             navigate("/order-success");
+           }
         }
       }
       catch(err){
