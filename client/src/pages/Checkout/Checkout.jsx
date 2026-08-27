@@ -247,7 +247,7 @@ import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCart, createOrder } from "../../api/api";
 import { clearCarts } from "../../redux/slices/cartSlice";
-import { createPaymentOrder ,verifyPayment} from "../../api/api";
+import { createPaymentOrder ,verifyPaymentAPI} from "../../api/api";
 
 
 
@@ -294,24 +294,24 @@ const Checkout = () => {
 
 
     
-    const createRazorpayOrder = async () => {
+    // const createRazorpayOrder = async () => {
 
-        try {
+    //     try {
 
-            const response = await createPaymentOrder(itemsPrice);
+    //         const response = await createPaymentOrder(itemsPrice);
 
-            return response.order;
+    //         return response.order;
 
-        } catch (error) {
+    //     } catch (error) {
 
-            console.error(
-                "Create order error:",
-                error
-            );
+    //         console.error(
+    //             "Create order error:",
+    //             error
+    //         );
 
-            throw error;
-        }
-    };
+    //         throw error;
+    //     }
+    // };
 
 
     
@@ -319,7 +319,7 @@ const Checkout = () => {
 
         try {
 
-            const response = await verifyPayment({
+            const response = await verifyPaymentAPI({
                     razorpay_order_id:
                         paymentResponse.razorpay_order_id,
 
@@ -330,12 +330,12 @@ const Checkout = () => {
                         paymentResponse.razorpay_signature,
                 })
 
-            return response.data;
+            return response;
 
         } catch(error) {
             console.error(
                 "Verification error:",
-                error
+                error.response?.data || error
             );
 
             throw error;
@@ -348,10 +348,9 @@ const Checkout = () => {
 
         try {
 
-            setLoading(true);
+           setLoading(true);
 
-
-            // 1. Load Razorpay
+           // 1. Load Razorpay
             const scriptLoaded =
                 await loadRazorpayScript();
 
@@ -368,23 +367,27 @@ const Checkout = () => {
             }
 
 
-            // 2. Create Razorpay order
-            const razorpayOrder =
-                await createRazorpayOrder();
+             const result =
+            await createOrder({
 
+                address,
+                city,
+                pincode,
+                paymentMethod: "online"
+
+            });
+
+             
+            
+          
 
             // 3. Razorpay options
             const options = {
 
-                key:
-                    import.meta.env
-                        .VITE_RAZORPAY_KEY_ID,
-
-                amount:
-                    razorpayOrder.amount,
-
-                currency:
-                    razorpayOrder.currency,
+                 key: result.keyId,
+        amount: result.razorpayOrder.amount,
+        currency: result.razorpayOrder.currency,
+        order_id: result.razorpayOrder.id,
 
                 name:
                     "My E-Commerce Store",
@@ -393,7 +396,7 @@ const Checkout = () => {
                     "E-commerce Test Payment",
 
                 order_id:
-                    razorpayOrder.id,
+                    result.razorpayOrder.id,
 
 
                 // Customer information
@@ -459,7 +462,21 @@ const Checkout = () => {
                             // Navigate to order success page
                             // navigate("/order-success");
 
+                             dispatch(clearCarts());
+
+                             await clearCart();
+
+                        navigate("/order-success");
+
                         }
+                        else {
+
+                        setError(
+                            "Payment verification failed"
+                        );
+
+                    }
+
 
                     } catch (error) {
 
@@ -554,20 +571,18 @@ try{
 
              const res = await createOrder({address,city,pincode,paymentMethod});
             console.log(res);
+            if(res){
             dispatch(clearCarts());
             await clearCart();
             navigate("/order-success");
+            }
             return;
         }
 
 
         if (paymentMethod === "online") {
-          const res =  await handleRazorpayPayment();
-           if(res){
-           dispatch(clearCarts());
-            await clearCart();
-            navigate("/order-success");
-           }
+          await handleRazorpayPayment();
+          return;
         }
       }
       catch(err){

@@ -1,9 +1,12 @@
 import asyncHandler from "express-async-handler";
 
-import Order   from "../models/Order.js";
+import Order from "../models/Order.js";
 import Product from "../models/Product.js";
-import Cart   from "../models/Cart.js";
-import User   from "../models/User.js";
+import Cart from "../models/Cart.js";
+import User from "../models/User.js";
+
+import razorpay from "../config/razorpay.js";
+
 
 // @desc    Place new order
 // @route   POST /api/orders
@@ -11,7 +14,7 @@ import User   from "../models/User.js";
 
 const placeOrder = asyncHandler(async (req, res) => {
     const {
-        address,city,pincode,
+        address, city, pincode,
         paymentMethod
     } = req.body;
 
@@ -24,7 +27,7 @@ const placeOrder = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Cart is empty");
     }
-    
+
 
     let totalPrice = 0;
 
@@ -65,11 +68,11 @@ const placeOrder = asyncHandler(async (req, res) => {
         taxPrice +
         shippingPrice;
 
-   const shippingAddress = {
-      address,
-      city,
-      pincode
-   }
+    const shippingAddress = {
+        address,
+        city,
+        pincode
+    }
 
     const order = await Order.create({
         user: req.user._id,
@@ -82,24 +85,100 @@ const placeOrder = asyncHandler(async (req, res) => {
         totalPrice: finalPrice
     });
 
-    for (const item of orderItems) {
 
-        await Product.findByIdAndUpdate(
-            item.product,
-            {
-                $inc: {
-                    stock: -item.quantity
-                }
-            }
-        );
+    if (paymentMethod === "online") {
+
+        const razorpayOrder =
+            await razorpay.orders.create({
+                amount: Math.round(finalPrice * 100),
+                currency: "INR",
+                receipt: order._id.toString()
+            });
+
+
+        // Save Razorpay order ID
+        order.razorpayOrderId =
+            razorpayOrder.id;
+
+        await order.save();
+
+
+        // IMPORTANT:
+        // Don't decrease stock
+        // Don't delete cart yet
+
+
+        return res.status(201).json({
+            success: true,
+
+            orderId: order._id,
+
+            razorpayOrder: {
+                id: razorpayOrder.id,
+                amount: razorpayOrder.amount,
+                currency: razorpayOrder.currency
+            },
+
+            keyId:
+                process.env.RAZORPAY_KEY_ID
+        });
     }
 
-    await Cart.deleteMany({
-    user: req.user._id
-    });
-    
 
-    res.status(201).json(order);
+    // ================================
+    // COD
+    // ================================
+
+    if (paymentMethod === "cod") {
+
+        for (const item of orderItems) {
+
+            await Product.findByIdAndUpdate(
+                item.product,
+                {
+                    $inc: {
+                        stock: -item.quantity
+                    }
+                }
+            );
+
+        }
+
+
+        await Cart.deleteMany({
+            user: req.user._id
+        });
+
+
+        return res.status(201).json({
+            success: true,
+            order
+        });
+    }
+
+
+
+    // for (const item of orderItems) {
+
+    //     await Product.findByIdAndUpdate(
+    //         item.product,
+    //         {
+    //             $inc: {
+    //                 stock: -item.quantity
+    //             }
+    //         }
+    //     );
+    // }
+
+    // await Cart.deleteMany({
+    //     user: req.user._id
+    // });
+
+
+    // res.status(201).json(order);
+
+
+
 });
 
 
@@ -109,23 +188,23 @@ const placeOrder = asyncHandler(async (req, res) => {
 // @access  Private
 
 const getMyOrders = asyncHandler(async (req, res) => {
-   try{
-    const orders = await Order.find({
-        user: req.user._id
-    }).populate("orderItems.product")
-        .sort({ createdAt: -1 });
+    try {
+        const orders = await Order.find({
+            user: req.user._id
+        }).populate("orderItems.product")
+            .sort({ createdAt: -1 });
 
-    res.status(200).json({
-       success:true,
-        orders,
-   });
-}
-catch(err){
-    res.status(400).json({
-        success:false,
-        message:err.message
-    })
-}
+        res.status(200).json({
+            success: true,
+            orders,
+        });
+    }
+    catch (err) {
+        res.status(400).json({
+            success: false,
+            message: err.message
+        })
+    }
 
 });
 
@@ -157,7 +236,7 @@ const getOrderById = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json({
-        success:true,
+        success: true,
         order
     });
 });
@@ -185,7 +264,7 @@ const getAllOrders = asyncHandler(async (req, res) => {
     const totalRevenue = await Order.aggregate([
         {
             $match: {
-                orderStatus:"Delivered"
+                orderStatus: "Delivered"
             }
         },
         {
@@ -220,8 +299,8 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     const { status } = req.body;
 
 
-    console.log("status = ",status);
-    console.log("id = ",req.params.id);
+    console.log("status = ", status);
+    console.log("id = ", req.params.id);
     const allowedStatus = [
         "Confirmed",
         "Packed",
@@ -238,7 +317,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 
     const order = await Order.findById(req.params.id);
 
-    console.log("order = ",order);
+    console.log("order = ", order);
     if (!order) {
         res.status(404);
         throw new Error("Order not found");
@@ -250,8 +329,8 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     }
 
     order.orderStatus = status;
-    console.log("status =",status.orderStatus);
-    
+    console.log("status =", status.orderStatus);
+
     if (status === "Delivered") {
         order.isDelivered = true;
         order.deliveredAt = Date.now();
@@ -260,7 +339,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     await order.save();
 
     res.status(200).json({
-        success:true,
+        success: true,
         order
     });
 
@@ -339,9 +418,9 @@ const markOrderAsDelivered = asyncHandler(async (req, res) => {
 // @access  Private
 
 const cancelOrder = asyncHandler(async (req, res) => {
-    console.log("id = ",req.params.id);
+    console.log("id = ", req.params.id);
     const order = await Order.findById(req.params.id);
-    console.log("order = ",order);
+    console.log("order = ", order);
     if (!order) {
         res.status(404);
         throw new Error("Order not found");

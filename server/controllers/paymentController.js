@@ -351,6 +351,10 @@
 
 import razorpay from "../config/razorpay.js";
 import crypto from "crypto";
+import Order from "../models/Order.js";
+import Product from "../models/Product.js";
+import Cart from "../models/Cart.js";
+
 
 // ========================================
 // CREATE RAZORPAY ORDER
@@ -440,13 +444,88 @@ export const verifyRazorpayPayment = async (req, res) => {
             });
         }
 
-        // Payment is genuine
-        return res.status(200).json({
-            success: true,
-            message: "Payment verified successfully",
-            paymentId: razorpay_payment_id,
-            orderId: razorpay_order_id,
+        const order =
+            await Order.findOne({
+                razorpayOrderId:
+                    razorpay_order_id,
+
+                user: req.user._id
+            });
+
+
+        if (!order) {
+
+            return res.status(404).json({
+                success: false,
+                message:
+                    "Order not found"
+            });
+
+        }
+
+
+        // ==================================
+        // UPDATE PAYMENT
+        // ==================================
+
+        order.paymentStatus = "Paid";
+
+        order.razorpayPaymentId =
+            razorpay_payment_id;
+
+        order.razorpaySignature =
+            razorpay_signature;
+
+        order.paidAt = new Date();
+
+        order.orderStatus = "Confirmed";
+
+
+        await order.save();
+
+
+        // ==================================
+        // DECREASE STOCK
+        // ==================================
+
+        for (const item of order.orderItems) {
+
+            await Product.findByIdAndUpdate(
+                item.product,
+                {
+                    $inc: {
+                        stock: -item.quantity
+                    }
+                }
+            );
+
+        }
+
+        await Cart.deleteMany({
+            user: req.user._id
         });
+
+        return res.status(200).json({
+
+            success: true,
+
+            message:
+                "Payment verified successfully",
+
+            orderId:
+                order._id
+
+        });
+
+
+
+        // // Payment is genuine
+        // return res.status(200).json({
+        //     success: true,
+        //     message: "Payment verified successfully",
+        //     paymentId: razorpay_payment_id,
+        //     orderId: razorpay_order_id,
+        // });
 
     } catch (error) {
         console.error("Payment Verification Error:", error);

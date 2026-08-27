@@ -195,7 +195,7 @@ export const createPaymentOrder = async (amount) => {
 };
 
 // Verify Payment
-export const verifyPayment = async (paymentData) => {
+export const verifyPaymentAPI = async (paymentData) => {
   const response = await api.post("/payment/verify", paymentData);
   return response.data;
 };
