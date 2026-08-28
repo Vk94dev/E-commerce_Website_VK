@@ -69,6 +69,9 @@ const TrackOrder  = lazy(()=>
     import("@/pages/Order/TrackOrder")
 )
 
+const ReviewPage = lazy(()=>
+    import("@/pages/ReviewPage")
+)
 
 
 
@@ -144,6 +147,11 @@ function AppRoutes() {
                 <Route
                     path="product/:id"
                     element={<ProductDetails />}
+                />
+
+                <Route
+                    path="review/:id"
+                    element={<ReviewPage />}
                 />
 
                 <Route

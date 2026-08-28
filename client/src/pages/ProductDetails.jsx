@@ -6,6 +6,10 @@ import {addToWishlistSuccess} from "../redux/slices/wishlistSlice"
 import { useDispatch } from "react-redux";
 import { addToCartSuccess } from "../redux/slices/cartSlice";
 
+import ReviewSection from "../components/ReviewSection";
+
+import { FaStar, FaRegStar } from "react-icons/fa";
+
 const ProductDetails = () => {
   
   const { id } = useParams();
@@ -44,6 +48,11 @@ const handleWishlist = async (e)=>{
     catch(err){
       console.log(err.message);
     }
+}
+
+const handleReview = (e)=>{
+  e.preventDefault();
+  navigate(`/review/${id}`)
 }
 
 
@@ -107,6 +116,10 @@ const handleWishlist = async (e)=>{
     );
   }
 
+
+
+
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 text-[var(--text)] bg-[var(--bg)] ">
 
@@ -153,10 +166,13 @@ const handleWishlist = async (e)=>{
           <p className="text-2xl text-blue-600 font-bold mt-6">
             ₹{product.price}
           </p>
+           
+           <ReviewSection productId={product._id}/>
+
 
           {/* Buttons */}
 
-          <div className="flex gap-4 mt-6 ">
+          <div className="flex gap-4 mt-6  ">
 
             <button
               // onClick={() => alert("Added to cart")}
@@ -171,6 +187,15 @@ const handleWishlist = async (e)=>{
               className="border px-6 py-3 rounded-md text-black  bg-gray-200 hover:bg-gray-300"
             >
               ❤️ Wishlist
+            </button>
+
+            <button
+              onClick={handleReview}
+              className="border px-6 py-3 rounded-md text-white  bg-amber-500 hover:bg-amber-600 flex flex-row justify-between items-center gap-2"
+            >
+               <FaStar size={22} />
+           {/* <FaRegStar size={22} /> */}
+              Review
             </button>
 
           </div>

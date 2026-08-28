@@ -25,6 +25,7 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js"
 import categoryRoutes from "./routes/categoryRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 
 // Load Environment Variables
@@ -87,6 +88,7 @@ app.use("/api/contact", contactRoutes);
 
 app.use("/api/payment", paymentRoutes)
 
+app.use("/api/reviews", reviewRoutes);
 
 
 // 404 Route

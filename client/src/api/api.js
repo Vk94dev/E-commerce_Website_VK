@@ -203,6 +203,27 @@ export const verifyPaymentAPI = async (paymentData) => {
 
 
 
+// review 
+
+export const getProductReviews = async (productId, page = 1) => {
+  const response = await api.get(`/reviews/${productId}?page=${page}&limit=10`)
+  return response.data;
+}
+
+export const addReview = async (productId, reviewData) => {
+  const response = await api.post(`/reviews/${productId}`, reviewData);
+  return response.data;
+}
+
+export const updateReview = async (productId, reviewData) => {
+  const response = await api.put(`/reviews/${productId}`, reviewData);
+  return response.data;
+}
+
+export const deleteReview = async (productId) => {
+  const response = await api.delete(`/reviews/${productId}`);
+  return response.data;
+}
 
 
 
@@ -215,6 +236,9 @@ export const verifyPaymentAPI = async (paymentData) => {
 
 
 
+
+
+// admin
 
 export const adminDashboard = async () => {
   const response = await api.get("/admin/dashboard");
